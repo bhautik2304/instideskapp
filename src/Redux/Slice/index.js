@@ -1,0 +1,8 @@
+export {default as countryReducer} from './countrySlice'
+export {default as applicationReducer} from './applicationSlice'
+export {default as ambbesadorReducer} from './studentAmbbesadorSlice'
+export {default as authReducer } from './authslice'
+export {default as themeReducer } from "./themeslice"
+export {default as collegeReducer  }from './Collegeslice'
+export {default as rgisterReducer  }from './rgisterSlice'
+export {default as purposeReducer  }from './purposeSlice'

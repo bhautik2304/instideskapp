@@ -1,63 +1,97 @@
-import React from 'react';
-import {View, StyleSheet,Text,Image,TextInput,TouchableOpacity, ScrollView,StatusBar} from 'react-native';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text, Image, KeyboardAvoidingView, TextInput, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useDispatch } from 'react-redux'
-import { Logo } from "../../assets/index";
+import Ionicons from "react-native-vector-icons/FontAwesome5";
+import Ant from "react-native-vector-icons/AntDesign";
+import { DarkLogo } from "../../assets/index";
+import { Textinput, Button } from '../../components';
 import routeconst from '../../constants/routeconst';
-import {authUsers} from '../../Redux/Slice/authslice';
-const Login = ({navigation}) => {
+import { loginUsers, registerUserData } from '../../Redux/Slice/authslice';
+import { s, vs, ms, mvs } from 'react-native-size-matters';
+
+import { validater, Passwordvalidater, Mobailevalidater } from '../../Utils/Validaters';
+const Login = ({ navigation }) => {
+    const [mobaile, setMobaile] = useState('');
+    const [password, setPassword] = useState('');
+    const [eye, setEye] = useState(true);
     const dispatch = useDispatch()
-    const loginuser=()=>{
-        dispatch(authUsers(true))
+    const validateString = { password: 'Password More 8 words' }
+    const validateLenght = { validateLenght: 10 }
+    const loginuser = () => {
+        const data = {
+            mobaile: mobaile,
+            password: password,
+        }
+        const validate=Passwordvalidater(data,validateLenght,validateString)
+        console.log(validate)
+        const url = "https://dndtecnosol.in/api/login"
+
+
+        axios.post('https://gocoolgroup.com/api/login.php?token=70f1063ca2ae497bb9425a852683545b&username='+mobaile+'&password='+password+'', data).then((e) => {
+            console.log(e.data.data[0])
+            if (e.data.code!="5") {
+                // navigation.navigate(routeconst.detail)
+                alert('Not Found')
+            } else {
+                dispatch(registerUserData(e.data.data[0]))
+                navigation.navigate(routeconst.home)
+            }
+        })
     }
-    
+
     return (
         <>
-        <StatusBar backgroundColor={'#000000'} />
-        <View style={[styles.container,{backgroundColor:'#000000'}]}>
-            <View style={[styles.logo,{marginTop:30}]}>
-            <Logo size={'100%'} />
-            </View>
-            <ScrollView 
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            >
-            <View style={styles.scrollview}>
-            <Text style={styles.loginheading}>Login to your account</Text>
-            <TextInput placeholder='Username' placeholderTextColor={'black'} style={styles.loginInput}/>
-            <TextInput placeholder='Password' placeholderTextColor={'black'} style={styles.loginInput}/>
-            
-            <TouchableOpacity style={styles.btn} onPress={loginuser}>
-                <View>
-                    <Text style={styles.btntext}>Login</Text>
+            <StatusBar backgroundColor={'#fff'} />
+            <View style={[styles.container, { backgroundColor: '#fff' }]}>
+                <View style={[styles.logo, { marginTop: 30 }]}>
+                    <DarkLogo size={'100%'} />
                 </View>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.forget} onPress={()=>alert('hello')}>
-                <View>
-                    <Text style={styles.forgetpass}>Forget your password</Text>
-                </View>
-            </TouchableOpacity>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                >
+                    <View style={styles.scrollview}>
+                        <KeyboardAvoidingView style={{ width: '100%', alignItems: 'center' }}>
 
-            <TouchableOpacity onPress={()=>navigation.navigate(routeconst.resgister)}>
-                <View>
-                    <Text style={styles.signuptext}>Dont't have account?signup</Text>
-                </View>
-            </TouchableOpacity>
+                            <Text style={styles.loginheading}>Login to your account</Text>
+                            <Textinput fullwidth placeholder='Mobile Number' onchang={(e) => setMobaile(e)} />
+                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#eaeaea', height: 50, borderRadius: 7, width: '100%' }}>
+                                <Textinput onchang={(e) => setPassword(e)} width={'86%'} placeholder='Password' password={eye} />
+                                <TouchableOpacity onPress={() => setEye(!eye)}>
+                                    <View style={{ padding: 8 }}>
+                                        <Ionicons name={eye ? 'lock' : 'unlock'} size={16} color={'#000'} style={{ margin: 1 }} />
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                            <Button title={'Login'} btntxtcolor={'#fff'} color={'#0E8AC8'} fullwidth onPress={loginuser} />
+
+                            <TouchableOpacity style={styles.forget} onPress={() => navigation.navigate(routeconst.resetpass)}>
+                                <View>
+                                    <Text style={styles.forgetpass}>Forget your password</Text>
+                                </View>
+                            </TouchableOpacity>
+
+                            {/* <View>
+                                <Text style={styles.signuptext}>Dont't have account ?</Text>
+                            </View>
+                            <Button title={'Register'} btntxtcolor={'#fff'} color={'#0E8AC8'} fullwidth onPress={() => navigation.navigate(routeconst.detail)} /> */}
+                        </KeyboardAvoidingView>
+                    </View>
+                </ScrollView>
             </View>
-            </ScrollView>  
-        </View>
         </>
     );
 }
 
 const styles = StyleSheet.create({
-    scrollview:{
+    scrollview: {
         width: 320,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    container:{
+    container: {
         flex: 1,
         height: "100%",
         width: "100%",
@@ -65,34 +99,35 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    loginheading:{
-        fontSize: 30,
-        marginVertical: 30,
-        color:'#9CA3AF',
-        fontFamily: 'Sniglet Regular 400',
-    },
-    forgetpass:{
+    loginheading: {
         fontSize: 20,
-        marginVertical: 10,
-        color:'#fff'
+        marginVertical: 30,
+        color: '#424242',
+        fontFamily: 'Poppins-Bold',
     },
-    logo:{
-        height:150,
+    forgetpass: {
+        fontSize: 18,
+        marginVertical: 10,
+        color: '#424242',
+        fontFamily: 'Poppins-Regular',
+    },
+    logo: {
+        height: 150,
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    loginInput:{
+    loginInput: {
         height: 50,
         paddingHorizontal: 10,
         paddingVertical: 10,
-        fontWeight: 'bold',
+        fontSize: 14,
         width: '100%',
         borderRadius: 7,
         backgroundColor: '#eaeaea',
         marginVertical: 10,
     },
-    btn:{
+    btn: {
         backgroundColor: '#0E8AC8',
         height: 50,
         fontWeight: 'bold',
@@ -103,14 +138,16 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginVertical: 10,
     },
-    btntext:{
+    btntext: {
         fontWeight: 'bold',
         fontSize: 20,
+        color: '#fff'
     },
-    signuptext:{
-        fontSize: 20,
-        color:'#0E8AC8',
+    signuptext: {
+        fontSize: 18,
+        color: '#0E8AC8',
         marginVertical: 20,
+        fontFamily: 'Poppins-Bold'
     }
 })
 

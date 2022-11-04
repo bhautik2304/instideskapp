@@ -1,13 +1,19 @@
 import React from 'react';
 import {View, StyleSheet,Text,Image,TextInput,TouchableOpacity, ScrollView,StatusBar} from 'react-native';
-import { Logo } from "../../assets/index";
+import Octicons from "react-native-vector-icons/Octicons";
+import { DarkLogo } from "../../assets/index";
+import {Authheader,Textinput} from '../../components';
 import routeconst from '../../constants/routeconst';
-const Register = () => {
+import { s, vs, ms, mvs } from 'react-native-size-matters';
+
+const Register = ({navigation}) => {
+    const {navigate,goBack}=navigation
     return (
         <>
-            <StatusBar backgroundColor={'#000000'} />
-        <View style={[styles.container,{backgroundColor:'#000000'}]}>
-            <View style={[styles.logo,{marginTop:15}]}>
+            <StatusBar backgroundColor={'#fff'} />
+            <Authheader navigation={navigation} backgroundColor={'#fff'}/>
+        <View style={[styles.container,{backgroundColor:'#fff'}]}>
+            <View style={[styles.logo,{marginTop:0}]}>
             <Logo size={'100%'} />
             </View>
             <ScrollView 
@@ -16,26 +22,12 @@ const Register = () => {
             >
             <View style={styles.scrollview}>
             <Text style={styles.loginheading}>Register your Self</Text>
-            <TextInput placeholder='Username' placeholderTextColor={'black'} style={styles.loginInput}/>
-            <TextInput placeholder='Password' placeholderTextColor={'black'} style={styles.loginInput}/>
-            
-            <TouchableOpacity style={styles.btn}>
-                <View>
-                    <Text style={styles.btntext}>Login</Text>
-                </View>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.forget} onPress={()=>alert('hello')}>
-                <View>
-                    <Text style={styles.forgetpass}>Forget your password</Text>
-                </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={()=>alert('hello')}>
-                <View>
-                    <Text style={styles.signuptext}>Dont't have account?signup</Text>
-                </View>
-            </TouchableOpacity>
+            <Textinput fullwidth placeholder='your full Name'/>
+            <Textinput fullwidth placeholder='Mobaile no...' />
+            <Textinput fullwidth placeholder='email' />
+            <Textinput fullwidth placeholder='whatsapp no...' />
+            <Textinput fullwidth placeholder='Address' />
+            <Button title={'Next'} btntxtcolor={'#fff'} color={'#0E8AC8'} fullwidth onPress={()=>navigate(routeconst.resgister)}/>
             </View>
             </ScrollView>  
         </View>
@@ -60,8 +52,8 @@ const styles = StyleSheet.create({
     },
     loginheading:{
         fontSize: 30,
-        marginVertical: 30,
-        color:'#9CA3AF',
+        marginBottom:10,
+        color:'#424242',
         fontFamily: 'Sniglet Regular 400',
     },
     forgetpass:{
