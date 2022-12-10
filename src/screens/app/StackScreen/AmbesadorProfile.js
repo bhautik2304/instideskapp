@@ -17,6 +17,8 @@ const AmbesadorProfile = ({ navigation,route }) => {
   const studentStatus=(startonline,offlinetime)=>{
     const start=new Date(startonline).getHours()
     const starttime=new Date().getHours()
+
+    
     // if (start>starttime) {
     //   return true
     // }
