@@ -6,13 +6,14 @@ import { heightp, widthp } from '../../Utils/Responsive';
 import Badges from '../Badges';
 import Button from '../corecomponents/Button';
 
-const ApplicationStatusCard = ({navigation, status }) => {
+const ApplicationStatusCard = ({route,navigation, status,data,id }) => {
+    const statu=(status == 'Defer  Intake')
     return (
 
         <>
-            <View style={[styles.card, { marginVertical:10, borderColor: status ? 'green' : "red", }]}>
+            <View style={[styles.card, { marginVertical:10, borderColor: 'green'}]}>
                 <View style={[styles.justifyContentbetwin, styles.center, styles.row, { margin:10 }]}>
-                    <Text style={{ color: status ? 'green' : 'red', fontSize: widthp('3%'), fontFamily: 'Poppins-Bold' }}>{status ? 'In Visa': 'In Review'}</Text>
+                    <Text style={{ color: 'green', fontSize: widthp('3%'), fontFamily: 'Poppins-Bold' }}>{status}</Text>
                     <View>
                         <Text style={styles.cardht} >Visa Application </Text>
                     </View>
@@ -24,13 +25,13 @@ const ApplicationStatusCard = ({navigation, status }) => {
                         </View>
                     </View>
                     <View style={styles.marginy_15}>
-                        <Text style={[styles.poppins_regular, styles.font_14]}>Georgian College</Text>
-                        <Text style={{fontSize:widthp('3.8%')}}>Canada , Barrie</Text>
+                        <Text style={[styles.poppins_regular, styles.font_14]}>{data.university_name}</Text>
+                        <Text style={{fontSize:widthp('3.8%')}}>{data.country_name}</Text>
                     </View>
                 </View>
                 <View style={[styles.justifyContentbetwin, styles.center, styles.row, { marginTop: 2, paddingLeft: 50 }]}>
                     <Text style={{ color: 'red', fontSize: widthp('3.8%'), fontFamily: 'Poppins' }}></Text>
-                    <TouchableOpacity onPress={()=>navigation.navigate(routeconst.VisaAplication)} style={styles.btn}>
+                    <TouchableOpacity onPress={()=>navigation.navigate(routeconst.VisaAplication,{id:id})} style={styles.btn}>
                         <View>
                             <Text style={styles.btntext} >Show More</Text>
                         </View>

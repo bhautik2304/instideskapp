@@ -4,7 +4,8 @@ import apirouteconst from '../../constants/apirouteconst';
 
 
 export const fetchstate= createAsyncThunk('fetchall/state', async (id) => {
-    axios(apirouteconst.State_all).then((e) => e.data.data)
+   const state= axios(apirouteconst.State_all).then((e) => e.data.data)
+   return state
 })
 
 const initialState = {
@@ -18,7 +19,7 @@ const stateSlice = createSlice({
   extraReducers: {
     [fetchstate.fulfilled]: (state, action) => {
         state.loading = false;
-        state.application = action.payload;
+        state.state = action.payload;
     }
 }
 });

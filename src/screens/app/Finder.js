@@ -1,41 +1,62 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Switch, Text, TouchableOpacity, StatusBar,Image } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, StyleSheet,FlatList, ScrollView,Linking, Switch, Text, TouchableOpacity, StatusBar, Image } from 'react-native';
 import { Homeheader, Screen, Textinput, Card, Button } from '../../components/index';
 import { useSelector, useDispatch } from "react-redux";
 import Mateicon from "react-native-vector-icons/MaterialCommunityIcons";
 import Fa from "react-native-vector-icons/FontAwesome5";
 import SelectList from 'react-native-dropdown-select-list'
-import {fcs} from '../../assets';
-import { widthp ,heightp} from '../../Utils/Responsive';
-const countries = ["Egypt", "Canada", "Australia", "Ireland"]
+import { fcs } from '../../assets';
+import { widthp, heightp } from '../../Utils/Responsive';
+import { Modal, Select, Box, CheckIcon } from "native-base";
+import axios from 'axios';
+import { addCources } from '../../Redux/Slice/courcesSlice';
+import { widthPercentageToDP } from 'react-native-responsive-screen';
+// import { Select, Box, CheckIcon, Center, NativeBaseProvider } from "native-base";
+
 const Finder = ({ navigation }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const initialRef = useRef(null);
+  const finalRef = useRef(null);
+
   const [filter, setFilter] = useState(true);
   const [card, setCard] = useState(false);
   const { fontColor, backgrond, iconcolor } = useSelector((state) => state.themeMode.theme)
 
+  const {cources,stateUpdate} = useSelector((state) => state.cources)
+console.log(stateUpdate);
+
   return (
     <>
       {/* <StatusBar backgroundColor={'#f8f8f8'} /> */}
+      <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} initialFocusRef={initialRef} finalFocusRef={finalRef}>
+        <CorsesFilter />
+      </Modal>
       <Screen navigation={navigation} backgrond={'#0D77AB'} bootamtab={true} >
         <Homeheader navigation={navigation} userinfo logo />
-          <View style={styles.container}>
-            <View style={{ backgroundColor: backgrond, alignItems: 'center' }}>
-              {/* Serch Bar design */}
-              <SearchBox onPress={() => {
-                setFilter(!filter)
-                // setCard(!card)
-              }
-              } />  
-            </View>
+        <View style={styles.container}>
+          <View style={{ backgroundColor: backgrond, alignItems: 'center' }}>
+            {/* Serch Bar design */}
+            <SearchBox onPress={() => {
+              setModalVisible(!modalVisible);
+            }}
+            />
           </View>
-          <View style={[styles.container, styles.homedwd]}>
-            <View style={{ borderBottomWidth: 5, width: '8%', borderColor: '#3F3F3F', borderRadius: 50, marginVertical: 10 }}></View>
-            <View style={{width:'100%',height:heightp('80%'),backgroundColor:'#f8f8f8'}}>
-              <Image source={fcs} resizeMode='center' style={{height:'100%',width:'100%'}}/>
-            </View>
+        </View>
+        <View style={[styles.container, styles.homedwd]}>
+          <View style={{ borderBottomWidth: 5, width: '8%', borderColor: '#3F3F3F', borderRadius: 50, marginVertical: 10 }}></View>
+          <View style={{height: heightp('70%'),backgroundColor: '#F8F8F8',width:'100%',justifyContent: 'center', alignItems: 'center',paddingHorizontal:10}}>
+          {/* <ScrollView style={{  }}> cources.map((_,k)=><CoursesCard key={k} />)*/}
+            {stateUpdate ? 
+            <FlatList
+              data={cources}
+              renderItem={CoursesCard}
+              // keyExtractor={item => item.id}
+            />
+             : <Text>No data Found</Text>}
+          {/* </ScrollView> */}
           </View>
+        </View>
       </Screen>
-      
     </>
   );
 }
@@ -51,7 +72,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingVertical: 20,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#F8F8F8',
   },
   btn: {
     height: 50,
@@ -108,74 +129,160 @@ const SearchBox = ({ onPress }) => {
         </View>
       </TouchableOpacity>
       <View style={{ width: '80%', borderBottomWidth: 1, marginVertical: 20 }}>
-
+          
       </View>
     </>
   )
 }
 
 const CorsesFilter = ({ onPress }) => {
+  // setSelected={setSelected} data={data} onSelect={() => alert(selected)}
+  const [stateShow, setStateShow] = useState(false);
+  const [univerShow, setUniverShow] = useState(false);
+
+  const [stateId, setStateId] = useState('');
+  const [CountryId, setCountryId] = useState('');
+  const [universityId, setuniversityId] = useState('');
+
+  const [stateData, setStatedata] = useState([]);
+  const [univerData, setUniverdata] = useState([]);
+
+  const states = useSelector((state) => state.state.state)
+  const country = useSelector((state) => state.country.country)
+  const university = useSelector((state) => state.colleges.colleges)
+
+  const dispatch=useDispatch()
+
+  const countrys = country.map((data) => ({ id: data.country_id, value: data.country }))
+
+
+  const statefind = (id) => {
+    setCountryId(Number(id))
+    const statedata = states.filter((data) => Number(data.country_id) == Number(id))
+    const state = statedata.map((data) => ({ id: data.state_id, value: data.state_name }))
+    setStatedata(state)
+    setStateShow(true)
+    console.log(university)
+  }
+
+  const univerfind = (id) => {
+
+    setStateId(Number(id))
+    
+    const univerfinds = university.filter((data) => Number(data.state_id) == Number(stateId) && Number(data.country_id) == Number(CountryId))
+    const uni = univerfinds.map((data) => ({ id: data.university_id, value: data.university_name }))
+    setUniverdata(uni)
+    setUniverShow(true)
+    // console.log(uni)
+  }
+  
+  const allFilterCource=()=>{
+    // alert('msg');``
+    const url='https://gocoolgroup.com/api/course-details.php?token=70f1063ca2ae497bb9425a852683545b&'+'university='+universityId
+    console.log(url)
+    axios.get(url).then(e=>{
+      dispatch(addCources(e.data.data)) 
+      // console.log(e.data)
+    })
+  }
+
+  const data = ['vadodara']
   return (
     <View style={{ width: '90%', backgroundColor: '#fff', padding: 20, paddingHorizontal: 30, borderRadius: 20 }} >
       <Text style={{ color: '#000', fontSize: 15, fontFamily: 'Poppins-Bold', marginBottom: 10 }}>Start Searching Courses</Text>
       <Text style={{ color: '#000', fontFamily: 'Poppins-Regular', margin: 15 }}>Country</Text>
-      <Selectlist />
-      <Text style={{ color: '#000', fontFamily: 'Poppins-Regular', margin: 15 }}>State</Text>
-      <Selectlist />
-      <Text style={{ color: '#000', fontFamily: 'Poppins-Regular', margin: 15 }}>College / University</Text>
-      <Selectlist />
+      <Selectlist data={countrys} onvalue={(e) => statefind(e)} />
+      {stateShow && <>
+        <Text style={{ color: '#000', fontFamily: 'Poppins-Regular', margin: 15 }}>State</Text>
+        <Selectlist data={stateData} onvalue={(e) => univerfind(e)} />
+      </>
+      }
+      {univerShow ? <>
+        <Text style={{ color: '#000', fontFamily: 'Poppins-Regular', margin: 15 }}>College / University</Text>
+        <Selectlist data={univerData} onvalue={(e)=>setuniversityId(Number(e))} />
+      </> : null}
       <View style={{ marginTop: 20 }}>
-        <Button title={'Find Courses'} btntxtcolor={'#000'} color={'#A9EF90'} onPress={onPress} />
+        <Button title={'Find Courses'} btntxtcolor={'#000'} color={'#A9EF90'} onPress={allFilterCource} />
       </View>
     </View>
   );
 }
 
-const Selectlist = ({ placeholder, }) => {
-  const [selected, setSelected] = useState("");
+const Selectlist = ({ service, onvalue, data, placeholder, ...props }) => {
 
-  const data = [{ key: '1', value: 'Jammu & Kashmir' }, { key: 2, value: 'Vadodara' }];
+  // setSelected={setSelected} data={data} onSelect={() => alert(selected)}
   return (
     <>
       <View style={{ width: '100%' }}>
-        <SelectList placeholder={placeholder} boxStyles={{ borderWidth: 0, height: 40, backgroundColor: '#D9D9D9' }} setSelected={setSelected} data={data} onSelect={() => alert(selected)} />
+        <Select variant='outline' selectedValue={service} minWidth="200" accessibilityLabel="Choose Service" placeholder="Choose Service" _selectedItem={{
+          bg: "teal.600",
+          endIcon: <CheckIcon size="5"
+          // onValueChange={onvalue}
+          />
+        }} mt={1} onValueChange={onvalue}>
+          {data.map((e, i) => <Select.Item key={i} label={e.value} value={e.id} />)}
+        </Select>
       </View>
     </>
   )
 }
 
-const CoursesCard = ({ data }) => {
-  // const {college,}=data
+const CoursesCard = ({ item }) => {
+  // const {college,}=item
   return (
     <>
       <TouchableOpacity>
-        <View style={{ width: '90%', backgroundColor: '#fff', borderRadius: 15, padding: 10, marginVertical: 15 }}>
+      {}
+        <View style={{ elevation: 5,shadowColor: '#171717', width: widthPercentageToDP('95%'), backgroundColor: '#fff', borderRadius: 10, padding: 10, marginVertical: 15 ,borderLeftWidth: 16,borderColor:'#1C3C63'}}>
           <View style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ padding: 5, width: '80%' }}>
-              <Text style={{ marginBottom: 5, fontFamily: 'Poppins-Bold', fontSize: widthp('3.5%') }}>UNIVERSITY</Text>
+              <Text style={{ marginBottom: 5, fontFamily: 'Poppins-Bold', fontSize: widthp('3.5%') }}>{item.university_name}</Text>
               <View style={{ flexDirection: 'row' }}>
-                <Text style={{ flex: 1, flexWrap: 'wrap', fontFamily: 'Poppins-Regular', fontSize: widthp('3%') }}>La Trobe College-NEW SOUTH WALES</Text>
+              <Text style={{ fontFamily: 'Poppins-Bold', fontSize: widthp('3%') }}>Campus : </Text>
+                <Text style={{ flex: 1, flexWrap: 'wrap', fontFamily: 'Poppins-Regular', fontSize: widthp('3%') }}>{item.campusname}</Text>
               </View>
             </View>
             <View>
-              <Fa name='graduation-cap' color={'red'} size={30} style={{ marginRight: 15 }} />
+              <Fa name='graduation-cap' color={'#0D77AB'} size={30} style={{ marginRight: 15 }} />
             </View>
           </View>
 
-          <View style={{ width: '80%', flexDirection: 'row', justifyContent: 'space-evenly' }}>
-            <View style={{ margin: 10 }}>
+            <View style={{ margin: 5 }}>
               <Text style={{ fontFamily: 'Poppins-Bold', fontSize: widthp('3%') }}>COURSE NAME</Text>
-              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: widthp('3%') }}>D2D Engineering</Text>
+              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: widthp('3%') }}>{item.course_name}</Text>
             </View>
-            <View style={{ margin: 10 }}>
+          <View style={{ width: '75%', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ margin: 5 }}>
               <Text style={{ fontFamily: 'Poppins-Bold', fontSize: widthp('3%') }}>CREDENTIALS</Text>
-              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: widthp('3%') }}>BACHELOR</Text>
+              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: widthp('3%') }}>{item.course_type_name}</Text>
             </View>
-            <View style={{ margin: 10 }}>
-              <Text style={{ fontFamily: 'Poppins-Bold', fontSize: widthp('3%') }}>Min IELTS</Text>
-              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: widthp('3%') }}>6.0 - 5.5</Text>
+            <View style={{ margin: 5 }}>
+              <Text style={{ fontFamily: 'Poppins-Bold', fontSize: widthp('3%') }}>Min IELTS / PTE</Text>
+              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: widthp('3%') }}>{item.not_less_than_ielts}</Text>
             </View>
           </View>
+          <View style={{ width: '80%', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ margin: 5 }}>
+              <Text style={{ fontFamily: 'Poppins-Bold', fontSize: widthp('3%') }}>Length</Text>
+              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: widthp('3%') }}>{item.course_type_name}</Text>
+            </View>
+            <View style={{ margin: 5 }}>
+              <Text style={{ fontFamily: 'Poppins-Bold', fontSize: widthp('3%') }}>Application Fees</Text>
+              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: widthp('3%') }}>{item.not_less_than_ielts}</Text>
+            </View>
+          </View>
+          <View style={{ width: '80%', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ margin: 5 }}>
+              <Text style={{ fontFamily: 'Poppins-Bold', fontSize: widthp('3%') }}>Course Link</Text>
+              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: widthp('3%') }}>{item.course_type_name}</Text>
+            </View>
+            <View style={{ margin: 5 }}>
+            </View>
+          </View>
+          <View style={{width:'100%'}}>
+              <Button title={'Contact Us'} onPress={() => Linking.openURL('https://wa.me/+919824452328')} color="#0D77AB" fullwidth={true} btntxtcolor="#fff" />
+          </View>
+          
         </View>
       </TouchableOpacity>
     </>
@@ -194,7 +301,7 @@ const Noresult = () => {
                 <Text style={{ fontWeight: 'bold', fontSize: widthp('5%'), color: '#000' }}>No Courses Available</Text>
               </>
             </View>
-            <View style={{ width: '100%',height:335 }}>
+            <View style={{ width: '100%', height: 335 }}>
 
             </View>
           </View>
@@ -203,3 +310,16 @@ const Noresult = () => {
     </>
   )
 }
+
+// Filter parameter
+// 	●	id
+// 	●	
+// 	●	city
+// 	●	
+// 	●	
+// 	●	university_course
+// 	●	not_less_than
+// 	●	over_all
+// 	●	keyword
+// 	●	course_type
+// 	●	subcategory

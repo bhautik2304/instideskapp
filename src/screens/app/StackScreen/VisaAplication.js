@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Switch, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet,Linking, ScrollView, Switch, Text, TouchableOpacity,Image } from 'react-native';
 import { Homeheader, Screen, Textinput, Card, Button, Badges } from '../../../components/index';
 import { useSelector, useDispatch } from "react-redux";
 import Mateicon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -8,8 +8,14 @@ import SelectList from 'react-native-dropdown-select-list'
 import CountryFlag from "react-native-country-flag";
 import { s, vs, ms, mvs } from 'react-native-size-matters';
 import { widthp } from '../../../Utils/Responsive';
-
-const VisaAplication = ({ navigation, user }) => {
+// admission_copy
+const VisaAplication = ({route, navigation,data }) => {
+    const { id } = route.params;
+    // console.log(id);
+    const {application,code,loading} = useSelector((state) => state.application)
+    const newapp=application.filter((data) => data.admission_id == id)[0]
+    console.log(newapp);
+    const statu=(newapp.application_status == 'Defer  Intake')
     return (
         <>
             <Screen navigation={navigation} header={true}>
@@ -26,70 +32,76 @@ const VisaAplication = ({ navigation, user }) => {
                                 <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
                                     <View style={{ justifyContent: 'space-evenly' }}>
                                     <Text></Text>
-                                        <Text style={{ color:'#3f3f3f', fontFamily: 'Poppins-Regular',  fontSize: 16, marginBottom: 5 }}>GEORGIAN COLLEGE</Text>
-                                        <Text style={{color:'#3f3f3f', fontFamily: 'Poppins-Regular',  fontSize: 16 }}>Canada , Barrie</Text>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center',marginTop:30 }}>
+                                        <Text style={{ color:'#3f3f3f', fontFamily: 'Poppins-Regular',  fontSize: 16, marginBottom: 5 }}>{newapp.university_name}</Text>
+                                        <Text style={{color:'#3f3f3f', fontFamily: 'Poppins-Regular',  fontSize: 16 }}>{newapp.country_name}</Text>
+                                        <Text style={{color:'#3f3f3f', fontFamily: 'Poppins-Regular',  fontSize: 16 }}>{newapp.campus_name}</Text>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center',marginTop:5 }}>
                                             <Text style={{color:'#3f3f3f', fontFamily: 'Poppins-Regular',  fontSize: 16 }}>Status</Text>
                                             <View style={{ marginHorizontal: 30 }}>
-                                                <>{!user ? <Badges color={"#A9EF90"} fontcolor={'#000'} tag={'in Visa'} /> : <Badges color={"red"} fontcolor={'#000'} tag={'in Revive'} />}</>
+                                                <>{!statu ?  <Badges color={"red"} fontcolor={'#fff'} tag={newapp.application_status} /> : <Badges color={"#A9EF90"} fontcolor={'#fff'} tag={'in Visa'} />}</>
 
                                             </View>
                                         </View>
                                     </View>
                                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                        <View style={{ overflow: 'hidden', borderWidth: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff', height: 80, width: 80, backgroundColor: '#000', borderRadius: 100 }}>
-                                            <CountryFlag isoCode="ca" size={83} />
-                                            {/* <Image style={{ flex: 1, width: '100%', height: '100%', resizeMode: 'cover' }} source={canadaflag} /> */}
-                                        </View>
+                                        
                                     </View>
                                 </View>
                                 <View style={{ width: '100%', marginVertical: 30, borderBottomWidth: 1 }}></View>
                                 <View style={{ justifyContent: 'space-evenly' }}>
                                     <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <View>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Date:</Text>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Dec 2022 , 19</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Bold',  fontSize: 16 },styles.black]}>Application Date:</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>{new Date(newapp.applicationdate).toDateString()}</Text>
                                         </View>
                                         <View>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Fees Status:</Text>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Fees Not Paid</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Bold',  fontSize: 16 },styles.black]}>Fees Status:</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>{}</Text>
                                         </View>
                                     </View>
+                                    {/*  */}
                                     <View style={{ marginVertical: 20 }}>
-                                        <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Course:</Text>
-                                        <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>COMPUTER PROGRAMMING(CO-OP)</Text>
+                                        <Text style={[{ fontFamily: 'Poppins-Bold',  fontSize: 16 },styles.black]}>Course Name:</Text>
+                                        <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>{newapp.course_name}</Text>
                                     </View>
                                     <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <View>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Intake :</Text>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>For SEP-2020</Text>
-                                        </View>
-                                        <View>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Course Time :</Text>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>2 Years </Text>
-                                        </View>
-                                    </View>
-                                    <Button title={'Offer Letter Received'} color={'#A9EF90'} btntxtcolor={'#000'} />
-                                    <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <View>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Offer Date:</Text>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Sep 30 , 20</Text>
-                                        </View>
-                                        <View>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Offer Type:</Text>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Unconditional</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Bold',  fontSize: 16 },styles.black]}>Intake Date:</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>{newapp.intake_month} {newapp.intake_year}</Text>
                                         </View>
                                     </View>
                                     <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <View>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Selection Date:</Text>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Nov 30 , -1</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Bold',  fontSize: 16 },styles.black]}>Offer Date:</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>{null}</Text>
                                         </View>
                                         <View>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Course Date:</Text>
-                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>Jan 01 , 70</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Bold',  fontSize: 16 },styles.black]}>Offer Type:</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>{(newapp.offer_type == '1') ? 'Conditional' : 'Unconditional'}</Text>
                                         </View>
                                     </View>
+                                    <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <View>
+                                            <Text style={[{ fontFamily: 'Poppins-Bold',  fontSize: 16 },styles.black]}>Offer Expiry Date:</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>{new Date(newapp.offerexpire).toDateString()}</Text>
+                                        </View>
+                                        <View>
+                                            <Text style={[{ fontFamily: 'Poppins-Bold',  fontSize: 16 },styles.black]}>Course Date:</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>{new Date(newapp.coursedate).toDateString()}</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <View>
+                                            <Text style={[{ fontFamily: 'Poppins-Bold',  fontSize: 16 },styles.black]}>Submission Date:</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>{new Date(newapp.submissiondate).toDateString()}</Text>
+                                        </View>
+                                        <View>
+                                            <Text style={[{ fontFamily: 'Poppins-Bold',  fontSize: 16 },styles.black]}>Course Date:</Text>
+                                            <Text style={[{ fontFamily: 'Poppins-Regular',  fontSize: 16 },styles.black]}>{new Date(newapp.coursedate).toDateString()}</Text>
+                                        </View>
+                                    </View>
+                                    <Button title={'Offer/Admission Letter'} color={'#A9EF90'} onPress={()=>Linking.openURL(newapp.admission_copy)} btntxtcolor={'#000'} />
+                                    <Button title={'Fees Receipt'} color={'#A9EF90'} onPress={()=>Linking.openURL(newapp.fees_receipt)} btntxtcolor={'#000'} />
                                 </View>
                             </View>
                         </View>
@@ -153,3 +165,4 @@ const styles = StyleSheet.create({
 });
 
 export default VisaAplication;
+// shikhasherawala@gmail.com

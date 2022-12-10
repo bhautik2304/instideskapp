@@ -13,22 +13,29 @@ import axios from "axios";
 import { fetchAmbesader } from '../../Redux/Slice/studentAmbbesadorSlice';
 import { fetchApplication } from "../../Redux/Slice/applicationSlice";
 import { getPurpose } from "../../Redux/Slice/purposeSlice";
+import { fetchstate } from "../../Redux/Slice/stateSlice";
+
+import { registerUserData } from "../../Redux/Slice/authslice";
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.authUser.auth)
-  const userStatus = useSelector((state) => state.authUser.authStatus)
-  useEffect(() => {
-    userStatus==true ? dispatch(fetchApplication(user.inquiry_id)) : null
+  
+const user = useSelector((state) => state.authUser.auth)
+const userStatus = useSelector((state) => state.authUser.authStatus)
+useEffect(() => {
+    
     dispatch(fetchAmbesader())
     dispatch(fetchCountry())
     dispatch(fetchCollege())
+    dispatch(fetchstate())
+    userStatus==true ? dispatch(fetchApplication(user.inquiry_id)) : null
     // dispatch(getPurpose())
   }, [userStatus]);
   
-  const application = useSelector((state) => state)
+  const {application,code,loading} = useSelector((state) => state.application)
+  const data = useSelector((state) => state.authUser)
   const { colleges } = useSelector((state) => state.colleges)
-  console.log(application)
+  // console.log(data)
   return (
     <>
       <Screen navigation={navigation} backgrond={'#0D77AB'} bootamtab={true} >
@@ -45,13 +52,8 @@ const Home = ({ navigation }) => {
             <View style={[styles.container, { justifyContent: 'flex-start', alignItems: 'flex-start', paddingHorizontal: 20, marginVertical: 20 }]}>
               <Text style={{ fontSize: widthp('5%'), color: '#3F3F3F' }}>Application Status</Text>
             </View>
-            {userStatus ? (<>
-              {/* <ApplicationStatusCard navigation={navigation} /> */}
-              <ApplicationStatusCard navigation={navigation} status />
-            </>) : (<>
-
-              <AuthCard navigation={navigation} />
-            </>)}
+              
+            {userStatus ? (code=='5') ? application.map((e,k)=><ApplicationStatusCard key={k} navigation={navigation} status={e.application_status} data={e} id={e.admission_id} />) : <><Text style={{color:'red'}}>{application}</Text></>  : <AuthCard navigation={navigation} />}
             <View style={[styles.container, { marginVertical: hp(5) }]}>
               {/* Banner */}
               <ScrollView style={{ paddingVertical: 0 }} showsHorizontalScrollIndicator={false} horizontal={true}>
@@ -76,11 +78,6 @@ const Home = ({ navigation }) => {
               <Text style={{ fontSize: widthp('4%'), color: '#fff' }}>Accommodation</Text>
             </View>
             <Textinput placeholder={'Search by area or city'} width="80%" />
-            <View style={[styles.container, { marginVertical: 30 }]}>
-              <View style={{ borderBottomWidth: 5, width: '8%', borderColor: '#3F3F3F', borderRadius: 50, marginVertical: 5 }}></View>
-              <Text style={{ fontFamily: 'Poppins-Bold', fontSize: widthp('5%'), marginVertical: 20 }}>Searching for Jobs ?</Text>
-              <Button title={'Job openings'} onPress={() => navigation.navigate(routeconst.Job)} btntxtcolor={'#fff'} color={'#0D77AB'} width={200} />
-            </View>
           </View>
         </ScrollView>
       </Screen>

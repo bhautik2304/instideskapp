@@ -9,7 +9,7 @@ const CollegesCard = ({ routes,data,navigation,width }) => {
     return (
         <>
             <TouchableOpacity onPress={()=>navigation.navigate(routeconst.CollegeProfile,{id:university_id})}>
-                <View style={[styles.card,styles.shadowProp,{margin:20,width:width? width : 300}]}>
+                <View style={[styles.card,styles.shadowProp,{margin:20,width:width? width : 300, elevation: 5,shadowColor: '#171717',}]}>
                     <View style={[styles.row]}>
                         <View style={{ width: '50%', height: 130, justifyContent: 'center', alignItems: 'center' }}>
                             <Image source={uni_logo ? {uri:'https://gocoolgroup.com/crmportal/'+uni_logo} : default_unilogo} resizeMode='contain' style={{ width: '100%', height: '100%' }} />

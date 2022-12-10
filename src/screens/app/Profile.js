@@ -10,22 +10,35 @@ import routeconst from '../../constants/routeconst';
 import { s, vs, ms, mvs } from 'react-native-size-matters';
 import { widthp } from '../../Utils/Responsive';
 import { getPurpose } from "../../Redux/Slice/purposeSlice";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const Profile = ({ navigation }) => {
     const dispatch = useDispatch()
     const { fontColor, backgrond, iconcolor } = useSelector((state) => state.themeMode.theme)
     const { email_id, first_name } = useSelector((state) => state.authUser.auth)
     const userStatus = useSelector((state) => state.authUser.authStatus)
     const application = useSelector((state) => state.application)
+    // const clearAll = async () => {
+    //     try {
+    //       AsyncStorage.removeItem('user', (err) => console.log('userId', err))
+    //     //   alert('done')
+    //     } catch(e) {
+    //         // clear error
+    //     }
+    //     console.log('logout Done.')
+    // }
+    // shikhasherawala@gmail.com
     const logout = () => {
-        dispatch(loginUsers([]))
+        // dispatch(loginUsers(false))
         dispatch(logoutUsers(false))
-    }
+            // clearAll()
+        }
     useEffect(() => {
-        userStatus==true ? dispatch(fetchApplication(user.inquiry_id)) : null
+        // userStatus==true ? dispatch(fetchApplication(user.inquiry_id)) : null
         dispatch(getPurpose())
       }, [userStatus]);
-
-    console.log(application)
+    //  const username = AsyncStorage.getItem('user')
+    // console.log(`UserName : ${username}`)
     return (
         <>
             <Screen navigation={navigation} backgrond={'#0D77AB'} bootamtab={true} >
@@ -58,30 +71,12 @@ const Profile = ({ navigation }) => {
                             {
                                 userStatus ?
                                     <>
-                                        <View style={{ width: '95%', padding: 10, borderRadius: 20, backgroundColor: '#fff', justifyContent: 'center' }}>
-                                            <To onPress={() => navigation.navigate(routeconst.VisaApplicationStatus)}>
-                                                <View style={{ height: vs(50), marginVertical: vs(5), width: '100%', justifyContent: 'center' }}>
-                                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: vs(10), alignItems: 'center' }}>
-                                                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                                            <Mateicon name='progress-alert' color={'red'} size={s(30)} style={{ marginRight: 15 }} />
-                                                            <Text style={{ fontFamily: 'Poppins', fontSize: widthp('4%'), color: '#000' }}>Application Status</Text>
-                                                        </View>
-
-                                                        <View>
-                                                            {/* icon */}
-                                                            <Ant name='right' color={'red'} size={s(20)} />
-                                                        </View>
-                                                    </View>
-                                                </View>
-                                            </To>
-                                        </View>
-
                                         <View style={{ width: '95%', padding: 30, backgroundColor: '#fff', borderRadius: 20, marginVertical: 20 }}>
                                             <Text style={{ fontSize: widthp('4%'), fontWeight: 'bold' }}>Your Account</Text>
                                             <MenuLink Title={'Your Student Profile'} Iconname={''} navigation={navigation} rotename={routeconst.StudentProfile} />
                                             <MenuLink Title={'Your Courses'} Iconname={''} navigation={navigation} rotename={routeconst.Notification} />
                                             <MenuLink Title={'Notifications'} Iconname={''} navigation={navigation} rotename={routeconst.Notification} />
-                                            <MenuLink Title={'Forex & Fund Transfer'} Iconname={''} navigation={navigation} rotename={routeconst.ForexFundTransfer} />
+                                            {/* <MenuLink Title={'Forex & Fund Transfer'} Iconname={''} navigation={navigation} rotename={routeconst.ForexFundTransfer} /> */}
                                             <MenuLink Title={'Account & Invoices'} Iconname={''} navigation={navigation} rotename={routeconst.AccountandInvoice} />
                                         </View>
                                         <View style={{ width: '95%', padding: 30, backgroundColor: '#fff', borderRadius: 20, marginVertical: 20 }}>
@@ -91,7 +86,7 @@ const Profile = ({ navigation }) => {
                                             <MenuLink Title={'Consultation Request'} Iconname={''} navigation={navigation} rotename={routeconst.Consultation} />
                                             <MenuLink Title={'IELTS Coaching Section'} Iconname={''} navigation={navigation} rotename={routeconst.Ielts} />
                                             <MenuLink Title={'Chat With Us'} Iconname={''} navigation={navigation} rotename={routeconst.Notification} />
-                                            <MenuLink Title={'Find Jobs'} Iconname={''} navigation={navigation} rotename={routeconst.Job} />
+                                            {/* <MenuLink Title={'Find Jobs'} Iconname={''} navigation={navigation} rotename={routeconst.Job} /> */}
                                             <MenuLink Title={'Student Emergency'} color={'red'} Iconname={''} navigation={navigation} rotename={routeconst.Notification} />
                                         </View>
                                     </>
@@ -105,7 +100,7 @@ const Profile = ({ navigation }) => {
                                                 <MenuLink Title={'Consultation Request'} Iconname={''} navigation={navigation} rotename={routeconst.Consultation} />
                                                 <MenuLink Title={'IELTS Coaching Section'} Iconname={''} navigation={navigation} rotename={routeconst.Ielts} />
                                                 <MenuLink Title={'Chat With Us'} Iconname={''} navigation={navigation} rotename={routeconst.Notification} />
-                                                <MenuLink Title={'Find Jobs'} Iconname={''} navigation={navigation} rotename={routeconst.Job} />
+                                                {/* <MenuLink Title={'Find Jobs'} Iconname={''} navigation={navigation} rotename={routeconst.Job} /> */}
                                                 <MenuLink Title={'Student Emergency'} color={'red'} Iconname={''} navigation={navigation} rotename={routeconst.Notification} />
                                             </View>
 

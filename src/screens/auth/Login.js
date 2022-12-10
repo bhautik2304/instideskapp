@@ -9,31 +9,59 @@ import { Textinput, Button } from '../../components';
 import routeconst from '../../constants/routeconst';
 import { loginUsers, registerUserData } from '../../Redux/Slice/authslice';
 import { s, vs, ms, mvs } from 'react-native-size-matters';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { validater, Passwordvalidater, Mobailevalidater } from '../../Utils/Validaters';
 const Login = ({ navigation }) => {
+
+    // const storeData = async (value) => {
+    //     try {
+    //         const userData = JSON.stringify(value)
+    //         await AsyncStorage.setItem('user', userData)
+    //     } catch (e) {
+    //         // saving error
+    //         console.log(e)
+    //     }
+    // }
+
     const [mobaile, setMobaile] = useState('');
     const [password, setPassword] = useState('');
     const [eye, setEye] = useState(true);
     const dispatch = useDispatch()
     const validateString = { password: 'Password More 8 words' }
     const validateLenght = { validateLenght: 10 }
+    // const getData = async () => {
+    //     try {
+    //         const value = await AsyncStorage.getItem('user')
+    //         console.log('user : '+value)
+    //         if (value !== null) {
+    //             // value previously stored
+    //             dispatch(registerUserData(JSON.parse(value)))
+    //             navigation.navigate(routeconst.home)
+    //         }
+
+
+    //     } catch (e) {
+    //         // error reading value
+    //     }
+    // }
+
+    // getData()
     const loginuser = () => {
         const data = {
             mobaile: mobaile,
             password: password,
         }
-        const validate=Passwordvalidater(data,validateLenght,validateString)
+        const validate = Passwordvalidater(data, validateLenght, validateString)
         console.log(validate)
-        const url = "https://dndtecnosol.in/api/login"
 
-
-        axios.post('https://gocoolgroup.com/api/login.php?token=70f1063ca2ae497bb9425a852683545b&username='+mobaile+'&password='+password+'', data).then((e) => {
+        axios.post('https://gocoolgroup.com/api/login.php?token=70f1063ca2ae497bb9425a852683545b&username=' + mobaile + '&password=' + password + '', data).then((e) => {
             console.log(e.data.data[0])
-            if (e.data.code!="5") {
+            if (e.data.code != "5") {
                 // navigation.navigate(routeconst.detail)
                 alert('Not Found')
             } else {
+                // storeData(e.data.data[0])
                 dispatch(registerUserData(e.data.data[0]))
                 navigation.navigate(routeconst.home)
             }

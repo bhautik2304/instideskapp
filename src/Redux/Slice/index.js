@@ -6,3 +6,5 @@ export {default as themeReducer } from "./themeslice"
 export {default as collegeReducer  }from './Collegeslice'
 export {default as rgisterReducer  }from './rgisterSlice'
 export {default as purposeReducer  }from './purposeSlice'
+export {default as stateReducer  }from './stateSlice'
+export {default as courcesReducer  }from './courcesSlice'

@@ -7,12 +7,23 @@ import routeconst from '../../../constants/routeconst';
 import { s, vs, ms, mvs } from 'react-native-size-matters';
 import UserAvatar from 'react-native-user-avatar';
 import { heightp, widthp } from '../../../Utils/Responsive';
+import { composeEventHandlers } from 'native-base';
 
 const AmbesadorProfile = ({ navigation,route }) => {
   const ambesador = useSelector((state) => state.ambesador.ambesader)
   const {id}=route.params
   const ambedata=ambesador.filter((data)=>data.id === id)
-  const {name,cource_name,email, college_name, country, city, state,social_link, loc, last_name,description,status,Whatsap_no,Satus_time }=ambedata[0]
+  const {online,oflline,name,cource_name,email, college_name, country, city, state,social_link, loc, last_name,description,status,Whatsap_no,Satus_time }=ambedata[0]
+  const studentStatus=(startonline,offlinetime)=>{
+    const start=new Date(startonline).getHours()
+    const starttime=new Date().getHours()
+    // if (start>starttime) {
+    //   return true
+    // }
+    console.log(startonline);
+    // const end=new Date(oflline).getHours()
+    return start<=starttime
+  }
   console.log(email)
   return (
     <>
@@ -33,7 +44,7 @@ const AmbesadorProfile = ({ navigation,route }) => {
                 <Text style={{ color: '#3F3F3F', fontFamily: 'Poppins-Bold', fontSize: widthp('3%'), }}>{cource_name}</Text>
                 <Text style={{ color: '#3F3F3F', fontFamily: 'Poppins-Bold', fontSize: widthp('3%'), }}>{college_name}</Text>
                 <Text style={{ color: '#3F3F3F', fontFamily: 'Poppins-Bold', fontSize: widthp('3%'), }}>{city}, {state}, {country}</Text>
-                <Text style={{ color:status ? 'green' : 'red', fontFamily: 'Poppins-Bold', fontSize: widthp('3.5%'), }}>{status ? 'Online' : 'Offline'}</Text>
+                <Text style={{ color:true ? 'green' : 'red', fontFamily: 'Poppins-Bold', fontSize: widthp('3.5%'), }}>{true ? 'Online' : 'Offline'}</Text>
               </View>
             </View>
 

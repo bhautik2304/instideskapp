@@ -4,7 +4,7 @@ const initialState = {
     auth:[],
     authStatus:false
 }
-
+// https://gocoolgroup.com/crmportal/
 const authslice = createSlice({
   name: 'auth',
   initialState,
@@ -14,6 +14,7 @@ const authslice = createSlice({
       state.authStatus=true
     },
     logoutUsers:(state,action)=>{
+      state.auth=[]
       state.authStatus=false
     },
     registerUserData:(state,action)=>{

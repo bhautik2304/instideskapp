@@ -26,8 +26,10 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     btntext: {
+        
         fontWeight: 'bold',
         fontSize: widthp('4%'),
+        fontFamily:'Poppins-Bold'
     },
 })
 
